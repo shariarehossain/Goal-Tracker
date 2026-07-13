@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goal Tracker · Day Counter</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+    <div class="app-container" id="app">
+        <h1>🎯 GoalTracker <small>· auto save</small></h1>
+
+        <!-- STEP 0: Set File Name -->
+        <div id="step0" class="card">
+            <div class="step-indicator">
+                <span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+            </div>
+            <h3 style="margin-bottom: 8px;">📄 Set File Name</h3>
+            <p class="text-muted" style="margin-bottom: 18px;">Choose a name for your data file. It will be saved automatically to your device.</p>
+
+            <div class="input-group">
+                <label>📄 File name (without extension)</label>
+                <input type="text" id="localFileName" value="my_goal_data" style="max-width: 300px;" />
+                <span style="font-size: 0.75rem; color: #6a7f9e; display: block; margin-top: 6px;">
+                    💾 File will be saved to: <strong>Downloads</strong> folder
+                </span>
+                <span style="font-size: 0.75rem; color: #6a7f9e; display: block; margin-top: 4px;">
+                    📌 File name: <strong id="fileNamePreview">my_goal_data.json</strong>
+                </span>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                <button class="btn btn-primary" id="nextStep0">✅ Set File & Next →</button>
+                <button class="btn btn-outline" id="exportDataBtn">💾 Save to Downloads</button>
+            </div>
+            <div id="fileStatus" style="margin-top: 14px; padding: 8px 14px; background: #eef3fa; border-radius: 40px; font-size: 0.85rem; color: #1a2a4a;">
+                📂 Saved as: <span id="currentFileDisplay">not set</span>
+            </div>
+        </div>
+
+        <!-- STEP 1: Set Goal Year -->
+        <div id="step1" class="card hidden">
+            <div class="step-indicator">
+                <span class="step-dot"></span><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span>
+            </div>
+            <h3 style="margin-bottom: 8px;">📌 Set goal duration</h3>
+            <p class="text-muted" style="margin-bottom: 18px;">How many years until your goal?</p>
+            <div class="input-group">
+                <label>Goal length (years)</label>
+                <input type="number" id="goalYears" min="0.1" step="0.1" value="2" style="max-width: 180px;" />
+            </div>
+            <button class="btn btn-primary" id="nextStep1">Next →</button>
+        </div>
+
+        <!-- STEP 2: Date & Time -->
+        <div id="step2" class="card hidden">
+            <div class="step-indicator">
+                <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot active"></span><span class="step-dot"></span>
+            </div>
+            <h3 style="margin-bottom: 8px;">📅 Set start & end</h3>
+            <p class="text-muted">Start date: pick day, time — end auto-calculated</p>
+            <div class="grid-2" style="margin-top: 16px;">
+                <div>
+                    <label style="font-weight: 500;">Start Date</label>
+                    <div id="calendarContainer" style="background: white; border-radius: 28px; padding: 8px;"></div>
+                    <div class="time-picker">
+                        <span>🕒</span>
+                        <input type="time" id="startTime" value="09:00" />
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight: 500;">End Date (auto)</label>
+                    <div style="background: #f0f5fe; border-radius: 28px; padding: 18px 16px; margin-top: 6px;">
+                        <div id="endDateDisplay" style="font-size: 1.2rem; font-weight: 500;">—</div>
+                        <div id="endTimeDisplay" style="color: #3d5a78;">—</div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="backStep2">← Back</button>
+                <button class="btn btn-success" id="doneGoal">✅ Done — set goal</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Dashboard -->
+        <div id="step3" class="hidden">
+            <div class="flex-between" style="margin-bottom: 8px;">
+                <h3>📊 Dashboard</h3>
+                <span id="todayDisplay" style="background: #eef3fa; padding: 6px 18px; border-radius: 60px; font-size: 0.9rem;"></span>
+            </div>
+            <div class="stat-box">
+                <div class="stat-row"><span>⏳ Days remaining</span> <strong id="daysRemain">—</strong></div>
+                <div class="stat-row"><span>✅ Days completed</span> <strong id="daysComplete">—</strong></div>
+                <div class="stat-row"><span>📅 Goal period</span> <span id="goalPeriodDisplay">—</span></div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="flex-between">
+                    <h4>📋 Timetable for <span id="taskDateDisplay">today</span></h4>
+                    <button class="btn btn-outline" id="addTaskBtn" style="padding: 8px 18px;">+ Add task</button>
+                </div>
+                <div id="taskList" style="margin-top: 12px;"></div>
+                <div id="addTaskInput" class="hidden" style="display: flex; gap: 10px; margin-top: 12px;">
+                    <input type="text" id="newTaskText" placeholder="task description" style="flex: 1; padding: 12px 18px; border-radius: 60px; border: 1px solid #d7e0ec;" />
+                    <button class="btn btn-primary" id="saveTaskBtn">Save</button>
+                    <button class="btn btn-outline" id="cancelTaskBtn">Cancel</button>
+                </div>
+            </div>
+            <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="resetGoalBtn" style="color: #b13e4b;">🔄 Reset goal</button>
+                <button class="btn btn-outline" id="changeFileBtn">📄 Change file name</button>
+                <button class="btn btn-outline" id="exportDataBtn2">💾 Save to Downloads</button>
+                <button class="btn btn-danger" id="deleteFileBtn">🗑️ Delete File</button>
+                <span style="font-size: 0.8rem; color: #6a7f9e; margin-left: auto;" id="fileDisplayOnDashboard">file: —</span>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
