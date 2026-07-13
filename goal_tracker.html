@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goal Tracker · Day Counter</title>
+    <link rel="stylesheet" href="index.css" />
+    <style>
+        * {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+body {
+    background: #f5f7fb;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.app-container {
+    max-width: 780px;
+    width: 100%;
+    background: white;
+    border-radius: 40px;
+    box-shadow: 0 20px 60px rgba(0, 10, 30, 0.12);
+    padding: 30px 28px;
+    transition: all 0.2s;
+}
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #0b1a33;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+h1 small {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #4a5b7a;
+    margin-left: auto;
+}
+.card {
+    background: #f8faff;
+    border-radius: 28px;
+    padding: 24px 22px;
+    margin-bottom: 24px;
+    border: 1px solid #e9edf4;
+}
+.btn {
+    background: white;
+    border: 1px solid #d0d9e8;
+    padding: 12px 24px;
+    border-radius: 60px;
+    font-weight: 500;
+    color: #1a2a4a;
+    cursor: pointer;
+    transition: 0.15s;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+.btn-primary {
+    background: #1a2a4a;
+    border-color: #1a2a4a;
+    color: white;
+    box-shadow: 0 6px 14px rgba(26, 42, 74, 0.25);
+}
+.btn-primary:hover {
+    background: #0f1d36;
+    transform: scale(0.97);
+}
+.btn-outline {
+    background: transparent;
+    border-color: #c8d2e3;
+}
+.btn-outline:hover {
+    background: #eef3fc;
+}
+.btn-success {
+    background: #1e7b4c;
+    border-color: #1e7b4c;
+    color: white;
+}
+.btn-success:hover {
+    background: #14633b;
+}
+.btn-danger {
+    background: #b13e4b;
+    border-color: #b13e4b;
+    color: white;
+}
+.btn-danger:hover {
+    background: #942f3b;
+}
+.btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.step-indicator {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+.step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 20px;
+    background: #d7dfec;
+    transition: 0.2s;
+}
+.step-dot.active {
+    background: #1a2a4a;
+    width: 28px;
+}
+.input-group {
+    margin: 16px 0 10px;
+}
+.input-group label {
+    display: block;
+    font-weight: 500;
+    color: #1e2f4a;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+.input-group input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #d7e0ec;
+    border-radius: 40px;
+    font-size: 1rem;
+    background: white;
+    transition: 0.15s;
+}
+.input-group input:focus {
+    outline: none;
+    border-color: #1a2a4a;
+    box-shadow: 0 0 0 3px rgba(26, 42, 74, 0.1);
+}
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+}
+.calendar-grid .day {
+    background: white;
+    border-radius: 40px;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.85rem;
+    border: 1px solid #eef3fa;
+    cursor: pointer;
+    transition: 0.1s;
+}
+.calendar-grid .day.selected {
+    background: #1a2a4a;
+    color: white;
+    border-color: #1a2a4a;
+}
+.calendar-grid .day:hover {
+    background: #e5ecf7;
+}
+.time-picker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+.time-picker input {
+    padding: 12px 16px;
+    border-radius: 40px;
+    border: 1px solid #d7e0ec;
+    font-size: 1rem;
+    width: 140px;
+}
+.stat-box {
+    background: white;
+    border-radius: 24px;
+    padding: 16px 20px;
+    border: 1px solid #eef3fa;
+    margin: 10px 0;
+}
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f4fc;
+}
+.stat-row:last-child {
+    border: none;
+}
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: white;
+    padding: 12px 18px;
+    border-radius: 60px;
+    margin: 8px 0;
+    border: 1px solid #eef3fa;
+}
+.task-item input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: #1a2a4a;
+    cursor: pointer;
+}
+.task-item .task-text {
+    flex: 1;
+    font-weight: 450;
+}
+.task-item .task-status {
+    font-size: 0.8rem;
+    color: #4a6a8a;
+}
+.text-muted {
+    color: #5c6f8c;
+}
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.hidden {
+    display: none !important;
+}
+        
+        
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <h1>🎯 GoalTracker <small>· auto save</small></h1>
+
+        <!-- STEP 0: Set File Name -->
+        <div id="step0" class="card">
+            <div class="step-indicator">
+                <span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+            </div>
+            <h3 style="margin-bottom: 8px;">📄 Set File Name</h3>
+            <p class="text-muted" style="margin-bottom: 18px;">Choose a name for your data file. It will be saved automatically to your device.</p>
+
+            <div class="input-group">
+                <label>📄 File name (without extension)</label>
+                <input type="text" id="localFileName" value="my_goal_data" style="max-width: 300px;" />
+                <span style="font-size: 0.75rem; color: #6a7f9e; display: block; margin-top: 6px;">
+                    💾 File will be saved to: <strong>Downloads</strong> folder
+                </span>
+                <span style="font-size: 0.75rem; color: #6a7f9e; display: block; margin-top: 4px;">
+                    📌 File name: <strong id="fileNamePreview">my_goal_data.json</strong>
+                </span>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                <button class="btn btn-primary" id="nextStep0">✅ Set File & Next →</button>
+                <button class="btn btn-outline" id="exportDataBtn">💾 Save to Downloads</button>
+            </div>
+            <div id="fileStatus" style="margin-top: 14px; padding: 8px 14px; background: #eef3fa; border-radius: 40px; font-size: 0.85rem; color: #1a2a4a;">
+                📂 Saved as: <span id="currentFileDisplay">not set</span>
+            </div>
+        </div>
+
+        <!-- STEP 1: Set Goal Year -->
+        <div id="step1" class="card hidden">
+            <div class="step-indicator">
+                <span class="step-dot"></span><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span>
+            </div>
+            <h3 style="margin-bottom: 8px;">📌 Set goal duration</h3>
+            <p class="text-muted" style="margin-bottom: 18px;">How many years until your goal?</p>
+            <div class="input-group">
+                <label>Goal length (years)</label>
+                <input type="number" id="goalYears" min="0.1" step="0.1" value="2" style="max-width: 180px;" />
+            </div>
+            <button class="btn btn-primary" id="nextStep1">Next →</button>
+        </div>
+
+        <!-- STEP 2: Date & Time -->
+        <div id="step2" class="card hidden">
+            <div class="step-indicator">
+                <span class="step-dot"></span><span class="step-dot"></span><span class="step-dot active"></span><span class="step-dot"></span>
+            </div>
+            <h3 style="margin-bottom: 8px;">📅 Set start & end</h3>
+            <p class="text-muted">Start date: pick day, time — end auto-calculated</p>
+            <div class="grid-2" style="margin-top: 16px;">
+                <div>
+                    <label style="font-weight: 500;">Start Date</label>
+                    <div id="calendarContainer" style="background: white; border-radius: 28px; padding: 8px;"></div>
+                    <div class="time-picker">
+                        <span>🕒</span>
+                        <input type="time" id="startTime" value="09:00" />
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight: 500;">End Date (auto)</label>
+                    <div style="background: #f0f5fe; border-radius: 28px; padding: 18px 16px; margin-top: 6px;">
+                        <div id="endDateDisplay" style="font-size: 1.2rem; font-weight: 500;">—</div>
+                        <div id="endTimeDisplay" style="color: #3d5a78;">—</div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="backStep2">← Back</button>
+                <button class="btn btn-success" id="doneGoal">✅ Done — set goal</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Dashboard -->
+        <div id="step3" class="hidden">
+            <div class="flex-between" style="margin-bottom: 8px;">
+                <h3>📊 Dashboard</h3>
+                <span id="todayDisplay" style="background: #eef3fa; padding: 6px 18px; border-radius: 60px; font-size: 0.9rem;"></span>
+            </div>
+            <div class="stat-box">
+                <div class="stat-row"><span>⏳ Days remaining</span> <strong id="daysRemain">—</strong></div>
+                <div class="stat-row"><span>✅ Days completed</span> <strong id="daysComplete">—</strong></div>
+                <div class="stat-row"><span>📅 Goal period</span> <span id="goalPeriodDisplay">—</span></div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="flex-between">
+                    <h4>📋 Timetable for <span id="taskDateDisplay">today</span></h4>
+                    <button class="btn btn-outline" id="addTaskBtn" style="padding: 8px 18px;">+ Add task</button>
+                </div>
+                <div id="taskList" style="margin-top: 12px;"></div>
+                <div id="addTaskInput" class="hidden" style="display: flex; gap: 10px; margin-top: 12px;">
+                    <input type="text" id="newTaskText" placeholder="task description" style="flex: 1; padding: 12px 18px; border-radius: 60px; border: 1px solid #d7e0ec;" />
+                    <button class="btn btn-primary" id="saveTaskBtn">Save</button>
+                    <button class="btn btn-outline" id="cancelTaskBtn">Cancel</button>
+                </div>
+            </div>
+            <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="resetGoalBtn" style="color: #b13e4b;">🔄 Reset goal</button>
+                <button class="btn btn-outline" id="changeFileBtn">📄 Change file name</button>
+                <button class="btn btn-outline" id="exportDataBtn2">💾 Save to Downloads</button>
+                <button class="btn btn-danger" id="deleteFileBtn">🗑️ Delete File</button>
+                <span style="font-size: 0.8rem; color: #6a7f9e; margin-left: auto;" id="fileDisplayOnDashboard">file: —</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        
+        (function() {
+    // ----- PERSISTENCE (localStorage only - auto export to file) -----
+    let currentFileName = 'my_goal_data';
+
+    function getStorageKey() {
+        return 'goalTracker_' + currentFileName;
+    }
+
+    let appData = {
+        goalYears: 2,
+        startDate: null,
+        endDate: null,
+        tasks: {},
+        goalSet: false
+    };
+
+    function loadData() {
+        try {
+            const raw = localStorage.getItem(getStorageKey());
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                appData = { ...appData, ...parsed };
+                if (appData.startDate) appData.startDate = new Date(appData.startDate);
+                if (appData.endDate) appData.endDate = new Date(appData.endDate);
+                if (!appData.tasks) appData.tasks = {};
+                return true;
+            }
+        } catch (e) { console.error('Load error:', e); }
+        return false;
+    }
+
+    function saveData() {
+        try {
+            const copy = {
+                goalYears: appData.goalYears,
+                startDate: appData.startDate ? appData.startDate.toISOString() : null,
+                endDate: appData.endDate ? appData.endDate.toISOString() : null,
+                tasks: appData.tasks,
+                goalSet: appData.goalSet
+            };
+            localStorage.setItem(getStorageKey(), JSON.stringify(copy));
+            localStorage.setItem('goalTracker_fileName', currentFileName);
+        } catch (e) { console.error('Save error:', e); }
+    }
+
+    // Delete file data
+    function deleteFileData() {
+        if (confirm('⚠️ Are you sure you want to delete ALL data for file "' + currentFileName + '.json"?\n\nThis will:\n- Delete all goal data\n- Delete all tasks\n- Reset everything\n\nThis action cannot be undone!')) {
+            // Remove from localStorage
+            localStorage.removeItem(getStorageKey());
+            localStorage.removeItem('goalTracker_fileName');
+            
+            // Reset app data
+            appData = {
+                goalYears: 2,
+                startDate: null,
+                endDate: null,
+                tasks: {},
+                goalSet: false
+            };
+            
+            // Reset UI
+            selectedStartDate = null;
+            startTimeInput.value = '09:00';
+            goalYearsInput.value = '2';
+            currentFileName = 'my_goal_data';
+            localFileNameInput.value = 'my_goal_data';
+            
+            renderCalendar(new Date());
+            updateEndDateDisplay();
+            updateFileDisplay();
+            showStep(0);
+            
+            alert('✅ File data deleted successfully!\n\nFile: ' + currentFileName + '.json\nAll data has been reset.');
+        }
+    }
+
+    // Reset goal data (keep file)
+    function resetGoalData() {
+        if (confirm('⚠️ Are you sure you want to reset your goal data?\n\nThis will:\n- Reset goal settings\n- Clear all tasks\n- Keep the file name\n\nThis action cannot be undone!')) {
+            appData.goalSet = false;
+            appData.startDate = null;
+            appData.endDate = null;
+            appData.tasks = {};
+            appData.goalYears = 2;
+            
+            saveData();
+            
+            selectedStartDate = null;
+            startTimeInput.value = '09:00';
+            goalYearsInput.value = '2';
+            
+            renderCalendar(new Date());
+            updateEndDateDisplay();
+            showStep(0);
+            
+            alert('✅ Goal data reset successfully!\n\nFile name: ' + currentFileName + '.json\nStart fresh with new goal settings.');
+        }
+    }
+
+    // Export data to file - downloads to Downloads folder
+    function exportDataToFile() {
+        try {
+            const data = {
+                goalYears: appData.goalYears,
+                startDate: appData.startDate ? appData.startDate.toISOString() : null,
+                endDate: appData.endDate ? appData.endDate.toISOString() : null,
+                tasks: appData.tasks,
+                goalSet: appData.goalSet,
+                exportDate: new Date().toISOString()
+            };
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFileName + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ File saved successfully!\n\n📁 Location: Downloads folder\n📄 File name: ' + currentFileName + '.json\n\nYou can find this file in your device\'s Downloads folder.');
+            
+        } catch (e) {
+            alert('❌ Error saving file: ' + e.message);
+        }
+    }
+
+    // ----- state -----
+    let currentStep = 0;
+    let selectedStartDate = null;
+    let dashboardInterval = null;
+
+    // DOM refs
+    const step0 = document.getElementById('step0');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const localFileNameInput = document.getElementById('localFileName');
+    const fileNamePreview = document.getElementById('fileNamePreview');
+    const nextStep0 = document.getElementById('nextStep0');
+    const exportDataBtn = document.getElementById('exportDataBtn');
+    const exportDataBtn2 = document.getElementById('exportDataBtn2');
+    const currentFileDisplay = document.getElementById('currentFileDisplay');
+    const fileDisplayOnDashboard = document.getElementById('fileDisplayOnDashboard');
+    const deleteFileBtn = document.getElementById('deleteFileBtn');
+
+    const goalYearsInput = document.getElementById('goalYears');
+    const nextStep1 = document.getElementById('nextStep1');
+    const backStep2 = document.getElementById('backStep2');
+    const doneGoal = document.getElementById('doneGoal');
+    const calendarContainer = document.getElementById('calendarContainer');
+    const startTimeInput = document.getElementById('startTime');
+    const endDateDisplay = document.getElementById('endDateDisplay');
+    const endTimeDisplay = document.getElementById('endTimeDisplay');
+    const todayDisplay = document.getElementById('todayDisplay');
+    const daysRemain = document.getElementById('daysRemain');
+    const daysComplete = document.getElementById('daysComplete');
+    const goalPeriodDisplay = document.getElementById('goalPeriodDisplay');
+    const taskList = document.getElementById('taskList');
+    const taskDateDisplay = document.getElementById('taskDateDisplay');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const addTaskInput = document.getElementById('addTaskInput');
+    const newTaskText = document.getElementById('newTaskText');
+    const saveTaskBtn = document.getElementById('saveTaskBtn');
+    const cancelTaskBtn = document.getElementById('cancelTaskBtn');
+    const resetGoalBtn = document.getElementById('resetGoalBtn');
+    const changeFileBtn = document.getElementById('changeFileBtn');
+
+    // ----- helpers -----
+    function getToday() {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function formatDate(d) {
+        if (!d) return '—';
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function formatDateKey(d) {
+        if (!d) return '';
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function formatTime(d) {
+        if (!d) return '—';
+        return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function computeEndDate(startDate, years) {
+        if (!startDate) return null;
+        const end = new Date(startDate);
+        end.setFullYear(end.getFullYear() + years);
+        return end;
+    }
+
+    function updateFileDisplay() {
+        const full = currentFileName + '.json';
+        currentFileDisplay.textContent = full || 'not set';
+        if (fileDisplayOnDashboard) {
+            fileDisplayOnDashboard.textContent = '📁 ' + (full || '—');
+        }
+        if (fileNamePreview) {
+            fileNamePreview.textContent = full;
+        }
+    }
+
+    function renderCalendar(selectedDate) {
+        if (!selectedDate) selectedDate = new Date();
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        let html = `<div style="font-weight:600; margin:6px 0 8px;">${selectedDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</div><div class="calendar-grid">`;
+        const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+        weekDays.forEach(d => html += `<div style="font-size:0.7rem; color:#6f86a3; text-align:center;">${d}</div>`);
+        for (let i = 0; i < firstDay; i++) html += `<div></div>`;
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateObj = new Date(year, month, day);
+            const isSelected = (selectedStartDate && selectedStartDate.toDateString() === dateObj.toDateString());
+            html += `<div class="day ${isSelected ? 'selected' : ''}" data-day="${day}" data-month="${month}" data-year="${year}">${day}</div>`;
+        }
+        html += `</div>`;
+        calendarContainer.innerHTML = html;
+        calendarContainer.querySelectorAll('.day[data-day]').forEach(el => {
+            el.addEventListener('click', function() {
+                const day = parseInt(this.dataset.day);
+                const month = parseInt(this.dataset.month);
+                const year = parseInt(this.dataset.year);
+                selectedStartDate = new Date(year, month, day);
+                updateEndDateDisplay();
+                renderCalendar(selectedStartDate);
+                saveData();
+            });
+        });
+    }
+
+    function updateEndDateDisplay() {
+        if (!selectedStartDate) {
+            endDateDisplay.textContent = '—';
+            endTimeDisplay.textContent = '—';
+            return;
+        }
+        const years = parseFloat(goalYearsInput.value) || 2;
+        const end = computeEndDate(selectedStartDate, years);
+        if (end) {
+            endDateDisplay.textContent = formatDate(end);
+            const [h, m] = (startTimeInput.value || '09:00').split(':').map(Number);
+            const endTime = new Date(end);
+            endTime.setHours(h, m);
+            endTimeDisplay.textContent = formatTime(endTime);
+            appData.endDate = end;
+        }
+    }
+
+    function getTodayKey() {
+        return formatDateKey(getToday());
+    }
+
+    function renderTasks() {
+        const todayKey = getTodayKey();
+        taskDateDisplay.textContent = formatDate(new Date());
+        
+        if (!appData.tasks) appData.tasks = {};
+        if (!appData.tasks[todayKey]) {
+            appData.tasks[todayKey] = [];
+        }
+        
+        const todayTasks = appData.tasks[todayKey];
+        taskList.innerHTML = '';
+        if (todayTasks.length === 0) {
+            taskList.innerHTML = `<div class="text-muted" style="padding: 12px;">No tasks for today. Add one!</div>`;
+            return;
+        }
+        todayTasks.forEach((task, index) => {
+            const div = document.createElement('div');
+            div.className = 'task-item';
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = task.done || false;
+            cb.addEventListener('change', function() {
+                appData.tasks[todayKey][index].done = this.checked;
+                saveData();
+                renderTasks();
+            });
+            const span = document.createElement('span');
+            span.className = 'task-text';
+            span.textContent = task.text || 'unnamed';
+            const status = document.createElement('span');
+            status.className = 'task-status';
+            status.textContent = task.done ? '✅ done' : '⏳ pending';
+            const del = document.createElement('button');
+            del.textContent = '✕';
+            del.style.cssText = 'background: none; border: none; color: #b13e4b; font-size:1.2rem; cursor:pointer;';
+            del.addEventListener('click', function() {
+                appData.tasks[todayKey].splice(index, 1);
+                saveData();
+                renderTasks();
+            });
+            div.appendChild(cb);
+            div.appendChild(span);
+            div.appendChild(status);
+            div.appendChild(del);
+            taskList.appendChild(div);
+        });
+    }
+
+    function renderDashboard() {
+        if (!appData.goalSet || !appData.startDate || !appData.endDate) {
+            daysRemain.textContent = '—';
+            daysComplete.textContent = '—';
+            goalPeriodDisplay.textContent = '—';
+            return;
+        }
+        const now = new Date();
+        const start = new Date(appData.startDate);
+        const end = new Date(appData.endDate);
+        const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        const elapsed = Math.ceil((now - start) / (1000 * 60 * 60 * 24));
+        const remaining = Math.max(0, totalDays - elapsed);
+        daysRemain.textContent = remaining + ' days';
+        daysComplete.textContent = Math.min(elapsed, totalDays) + ' days';
+        goalPeriodDisplay.textContent = `${formatDate(start)} → ${formatDate(end)}`;
+        todayDisplay.textContent = formatDate(now) + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        renderTasks();
+        updateFileDisplay();
+    }
+
+    function showStep(step) {
+        step0.classList.add('hidden');
+        step1.classList.add('hidden');
+        step2.classList.add('hidden');
+        step3.classList.add('hidden');
+        if (step === 0) step0.classList.remove('hidden');
+        else if (step === 1) step1.classList.remove('hidden');
+        else if (step === 2) step2.classList.remove('hidden');
+        else if (step === 3) step3.classList.remove('hidden');
+        currentStep = step;
+        if (step === 3) {
+            renderDashboard();
+            if (dashboardInterval) clearInterval(dashboardInterval);
+            dashboardInterval = setInterval(() => {
+                if (currentStep === 3) renderDashboard();
+            }, 30000);
+        } else {
+            if (dashboardInterval) {
+                clearInterval(dashboardInterval);
+                dashboardInterval = null;
+            }
+        }
+    }
+
+    function resetGoal() {
+        if (confirm('Reset goal? All data will be cleared.')) {
+            appData.goalSet = false;
+            appData.startDate = null;
+            appData.endDate = null;
+            appData.tasks = {};
+            saveData();
+            selectedStartDate = null;
+            startTimeInput.value = '09:00';
+            goalYearsInput.value = '2';
+            renderCalendar(new Date());
+            updateEndDateDisplay();
+            showStep(0);
+        }
+    }
+
+    function loadFileInfo() {
+        try {
+            const saved = localStorage.getItem('goalTracker_fileName');
+            if (saved) {
+                currentFileName = saved;
+                localFileNameInput.value = currentFileName;
+                updateFileDisplay();
+                return true;
+            }
+        } catch (e) { console.error('Load file info error:', e); }
+        return false;
+    }
+
+    function applyFileSettings() {
+        const name = localFileNameInput.value.trim();
+        if (!name) {
+            alert('Please enter a file name.');
+            return false;
+        }
+        currentFileName = name;
+        saveData();
+        updateFileDisplay();
+        return true;
+    }
+
+    // ----- init -----
+    function init() {
+        loadFileInfo();
+        const dataExists = loadData();
+
+        if (dataExists && appData.goalSet && appData.startDate) {
+            selectedStartDate = new Date(appData.startDate);
+            startTimeInput.value = selectedStartDate.toTimeString().slice(0, 5);
+            goalYearsInput.value = appData.goalYears;
+            renderCalendar(selectedStartDate);
+            updateEndDateDisplay();
+            showStep(3);
+        } else {
+            selectedStartDate = new Date();
+            startTimeInput.value = '09:00';
+            renderCalendar(new Date());
+            updateEndDateDisplay();
+            showStep(0);
+        }
+        updateFileDisplay();
+
+        // Live preview of filename
+        localFileNameInput.addEventListener('input', function() {
+            fileNamePreview.textContent = this.value.trim() + '.json';
+        });
+
+        // Step0: set file name
+        nextStep0.addEventListener('click', function() {
+            if (!applyFileSettings()) return;
+            const hasData = loadData();
+            if (hasData && appData.goalSet && appData.startDate) {
+                selectedStartDate = new Date(appData.startDate);
+                startTimeInput.value = selectedStartDate.toTimeString().slice(0, 5);
+                goalYearsInput.value = appData.goalYears;
+                renderCalendar(selectedStartDate);
+                updateEndDateDisplay();
+                showStep(3);
+            } else {
+                appData = { goalYears: 2, startDate: null, endDate: null, tasks: {}, goalSet: false };
+                selectedStartDate = new Date();
+                startTimeInput.value = '09:00';
+                goalYearsInput.value = '2';
+                renderCalendar(new Date());
+                updateEndDateDisplay();
+                showStep(1);
+            }
+        });
+
+        // Export data buttons - saves to Downloads
+        exportDataBtn.addEventListener('click', exportDataToFile);
+        exportDataBtn2.addEventListener('click', exportDataToFile);
+
+        // Delete file button
+        deleteFileBtn.addEventListener('click', deleteFileData);
+
+        // Reset goal button (keep file)
+        resetGoalBtn.addEventListener('click', resetGoalData);
+
+        // Step1: next
+        nextStep1.addEventListener('click', function() {
+            const years = parseFloat(goalYearsInput.value);
+            if (!years || years <= 0) { alert('Please enter a valid number of years.'); return; }
+            appData.goalYears = years;
+            if (selectedStartDate) {
+                const end = computeEndDate(selectedStartDate, years);
+                if (end) appData.endDate = end;
+                updateEndDateDisplay();
+            }
+            showStep(2);
+        });
+
+        // Step2: back
+        backStep2.addEventListener('click', function() {
+            showStep(1);
+        });
+
+        // Done goal
+        doneGoal.addEventListener('click', function() {
+            if (!selectedStartDate) {
+                alert('Please select a start date.');
+                return;
+            }
+            const years = parseFloat(goalYearsInput.value) || 2;
+            const end = computeEndDate(selectedStartDate, years);
+            if (!end) { alert('Invalid date.'); return; }
+            const [h, m] = (startTimeInput.value || '09:00').split(':').map(Number);
+            const startWithTime = new Date(selectedStartDate);
+            startWithTime.setHours(h, m);
+            const endWithTime = new Date(end);
+            endWithTime.setHours(h, m);
+
+            appData.startDate = startWithTime;
+            appData.endDate = endWithTime;
+            appData.goalYears = years;
+            appData.goalSet = true;
+            if (!appData.tasks) appData.tasks = {};
+            const todayKey = getTodayKey();
+            if (!appData.tasks[todayKey] || appData.tasks[todayKey].length === 0) {
+                appData.tasks[todayKey] = [{ text: 'Example: work on goal', done: false }];
+            }
+            saveData();
+            showStep(3);
+        });
+
+        // Tasks
+        addTaskBtn.addEventListener('click', function() {
+            addTaskInput.classList.remove('hidden');
+            newTaskText.value = '';
+            newTaskText.focus();
+        });
+
+        cancelTaskBtn.addEventListener('click', function() {
+            addTaskInput.classList.add('hidden');
+        });
+
+        saveTaskBtn.addEventListener('click', function() {
+            const text = newTaskText.value.trim();
+            if (!text) { alert('Please enter task.'); return; }
+            const todayKey = getTodayKey();
+            if (!appData.tasks[todayKey]) appData.tasks[todayKey] = [];
+            appData.tasks[todayKey].push({ text, done: false });
+            saveData();
+            renderTasks();
+            addTaskInput.classList.add('hidden');
+        });
+
+        newTaskText.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') saveTaskBtn.click();
+        });
+
+        changeFileBtn.addEventListener('click', function() {
+            showStep(0);
+            updateFileDisplay();
+        });
+
+        startTimeInput.addEventListener('input', function() {
+            if (selectedStartDate) updateEndDateDisplay();
+        });
+
+        goalYearsInput.addEventListener('input', function() {
+            if (selectedStartDate) updateEndDateDisplay();
+        });
+    }
+
+    // Start the app
+    init();
+})();
+    </script>
+</body>
+</html>
